@@ -67,7 +67,7 @@ class Estadia:
             return PRECIO_ESTADIA_CORTA
         return PRECIOS_NOCHE[self.tipo_habitacion]*self.noches
     def calcular_recargo(self,minutos_usados):
-        if self.tipo_estadio=="Corta":
+        if self.tipo_estadia=="Corta":
             limite=180 # son 3 horas
         else:
             limite= 1500+1440*(self.noches - 1)
