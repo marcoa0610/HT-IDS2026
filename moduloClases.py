@@ -91,8 +91,8 @@ class Estadia:
             return total
     def calcular_total(self,minutos_usados):
         return (self.calcular_hospedaje()
-                + self.calcular_recargo(minutos_usados)
-                + self.calcular_total_servicios())
+        + self.calcular_recargo(minutos_usados)
+        + self.calcular_total_servicios())
                 
 
         
