@@ -55,7 +55,7 @@ class Servicio:
 
 class Estadia:
     # dos tipos de habitacion: Noche o Corta
-    def __init__(self,cliente,tipo_habitación, tipo_estadia, hora_ingreso, noches=1):
+    def __init__(self,cliente,tipo_habitacion, tipo_estadia, hora_ingreso, noches=1):
         self.cliente=cliente
         self.tipo_habitacion=tipo_habitacion
         self.tipo_estadia=tipo_estadia
