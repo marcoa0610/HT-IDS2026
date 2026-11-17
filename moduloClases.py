@@ -70,7 +70,7 @@ class Estadia:
         if self.tipo_estadio=="Corta":
             limite=180 # son 3 horas
         else:
-            limite= 1500+1440(self.noches-1)
+            limite= 1500+1440*(self.noches - 1)
         exceso=minuto_usados-limite
         fracciones=0
         while exceso>0:
