@@ -42,7 +42,7 @@ class Cliente:
     def __init__(self,nombre,documento):
         self.nombre=nombre
         self.documento=documento
-    def mostrar_informacion:
+    def mostrar_informacion(self):
         print(f"Cliente: {self.nombre}")
         print(f"Documento: {self.documento}")
 class Servicio:
@@ -85,10 +85,10 @@ class Estadia:
             return self.servicios.pop(indice)
         return None
     def calcular_total_servicios(self):
-        total=0
+        total = 0
         for servicio in self.servicios:
-            total= total+servicio.subtotal()
-            return total
+            total = total + servicio.subtotal()
+        return total
     def calcular_total(self,minutos_usados):
         return (self.calcular_hospedaje()
         + self.calcular_recargo(minutos_usados)
