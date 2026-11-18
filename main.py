@@ -13,17 +13,7 @@ def mostrar_menu():
 
 from moduloClases import Hostal
 from moduloFunciones import check_in
-def mostrar_menu():
-
-    print("\n===== HOSTAL TROPICANA =====")
-    print("1. Check-in")
-    print("2. Check-out")
-    print("3. Ver estado de habitaciones")
-    print("4. Servicios adicionales")
-    print("5. Reporte diario")
-    print("6. Salir")
-
-    return input("Digite que opcion quiere: ")
+mostrar_menu()
 
 
 hostal = Hostal()
