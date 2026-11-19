@@ -150,5 +150,86 @@ def quitar_cargo(estadia):
     else:
         print(f"Cargo quitado: {quitado.nombre}. Subtotal de servicios: ${estadia.calcular_total_servicios():.2f}")
 
+def reporteDiario(hostal):
+    print("\n--- REPORTE DIARIO ---")
+    print(f"Huespedes registrados: {hostal.huespedes_dia}")
+    print(f"Ingresos del dia: ${hostal.ingresos_dia:.2f}")
+    print("\n- ESTADO DE HABITACIONES -")
+    ocupadas = hostal.habitaciones_ocupadas()
+    disponibles = hostal.habitaciones_disponibles()
+    print(f"Habitaciones ocupadas: {len(ocupadas)}")
+    print(f"Habitaciones disponibles: {len(disponibles)}")
+    print(f"Total de habitaciones: {len(hostal.habitaciones)}")
+    print("\n- DETALLE DE HABITACIONES -")
+    for habitacion in hostal.habitaciones:
+        habitacion.mostrar_estado()
 
-  
+def check_out(hostal):
+    print("\n--- CHECK-OUT ---")
+    habitacion = pedir_habitacion_ocupada(hostal)
+    
+    if habitacion is None:
+        return
+    
+    estadia = habitacion.estadia
+    
+    hora_retiro = input("Hora de retiro (HH:MM): ")
+    try:
+        hora = datetime.strptime(hora_retiro, "%H:%M").time()
+    except ValueError:
+        print("Formato de hora invalido.")
+        return
+    
+    hora_ingreso = datetime.strptime(
+        estadia.hora_ingreso, "%H:%M"
+    ).time()
+    minutos_ingreso = (
+        hora_ingreso.hour *60 + hora_ingreso.minute
+    )
+    minutos_retiro = hora.hour * 60 + hora.minute
+    
+    if estadia.tipo_estadia == "Corta":
+        minutos_usados = minutos_retiro - minutos_ingreso
+        if minutos_usados < 0:
+            minutos_usados = minutos_usados + 1440   
+    else:
+        minutos_usados = (
+            1440 * estadia.noches + minutos_retiro - minutos_ingreso
+        )
+    
+    hospedaje = estadia.calcular_hospedaje()
+    recargo = estadia.calcular_recargo(minutos_usados)
+    servicios = estadia.calcular_total_servicios()
+    total = estadia.calcular_total(minutos_usados)
+    
+    #FACTURAAA
+    print("\n--- FACTURA ---")
+    print(f"Huesped: {estadia.cliente.nombre}")
+    print(f"Habitación: {habitacion.numero}")
+    print(f"Tipo de Habitación: {habitacion.tipo}")
+    print(f"Tipo de estadia: {estadia.tipo_estadia}")
+    print(f"Hora de ingreso: {estadia.hora_ingreso}")
+    print(f"Hora de Retiro: {hora_retiro}")
+    print(f"\nHospedaje: ${hospedaje:.2f}")
+    print(f"Recargo: ${recargo:.2f}")
+    print(f"Servicios: ${servicios:.2f}")
+    print(f"\nTOTAL A PAGAR: ${total:.2f}")
+    
+    pago = 0
+    while pago < total:
+        try:
+            pago = float(input("Monto recibido: $"))
+            if pago < total:
+                print("El pago es insuficente.")
+        except ValueError:
+            print("Debe ingresar un monto válido.")
+    
+    cambio = pago - total
+    print(f"\nPago recibido: ${pago}")
+    print(f"Cambio: ${cambio:.2f}")
+    
+    habitacion.estadia = None
+    hostal.ingresos_dia += total
+    
+    print("\nLa habitación fue liberada")
+    print("--- CHECK-OUT --- ")

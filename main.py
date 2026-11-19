@@ -8,12 +8,13 @@ def mostrar_menu():
     print("4. Servicios adicionales")
     print("5. Reporte diario")
     print("6. Salir")
-    input("Digite que opción quiere: ")
+    return input("Digite que opción quiere: ")
 
 
 from moduloClases import Hostal
 from moduloFunciones import check_in
-mostrar_menu()
+from moduloFunciones import check_out
+from moduloFunciones import reporteDiario
 
 
 hostal = Hostal()
@@ -26,7 +27,7 @@ while True:
         check_in(hostal)
 
     elif opcion == "2":
-        print("Funcion de check-out pendiente.")
+        check_out(hostal)
 
     elif opcion == "3":
         for habitacion in hostal.habitaciones:
@@ -37,7 +38,7 @@ while True:
         gestionar_servicios(hostal)
 
     elif opcion == "5":
-        print("Reporte diario pendiente.")
+        reporteDiario(hostal)
 
     elif opcion == "6":
         print("Gracias por visitar Hostal Tropicana.")
