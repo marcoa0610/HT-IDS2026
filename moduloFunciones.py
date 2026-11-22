@@ -1,9 +1,12 @@
 #Funciones
 # Funciones
-from moduloDatos import SERVICIOS
 from datetime import datetime, time
 from moduloClases import Cliente
 from moduloClases import Estadia
+from moduloDatos import SERVICIOS
+from moduloDatos import PRECIOS_NOCHE
+from moduloDatos import PRECIO_ESTADIA_CORTA
+from moduloDatos import HABITACIONES
 def pedir_habitacion_ocupada(hostal):
     try:
         numero_hab = int(input("Numero de habitacion: "))
@@ -19,12 +22,10 @@ def pedir_habitacion_ocupada(hostal):
         print("Esa habitacion no tiene huesped.")
         return None
     return habitacion
-
 def gestionar_servicios(hostal):
     habitacion = pedir_habitacion_ocupada(hostal)
     if habitacion is None:
         return
-
     estadia = habitacion.estadia
     nombres = []
     for servicio in SERVICIOS:
@@ -69,24 +70,37 @@ def gestionar_servicios(hostal):
     
 def check_in(hostal):
     print("\n===== CHECK-IN =====")
-    nombre = input("Nombre del huesped: ")
+    nombre = input("Nombre del huesped: ").strip().title()
     documento = input("Numero de documento: ")
-
     while True:
+        print(f"Estos son los precios que manejamos si tu tipo estadia es noche:")
+        for llave, valor in PRECIOS_NOCHE.items():
+            print(f"{llave}: ${valor}")
+        print(f"Este es el precio si su estadia es corta: ${PRECIO_ESTADIA_CORTA}")
         tipo_estadia = input("Tipo de estadia (Noche/Corta): ").strip().capitalize()
         if tipo_estadia == "Noche" or tipo_estadia == "Corta":
             break
         else:
             print("Tipo de estadia invalido.")
-    try:
-        numero = int(input("Numero de habitacion: "))
-    except ValueError:
-        print("Debe ingresar un numero valido.")
-        return
-    habitacion = hostal.buscar_habitacion(numero)
-    if habitacion is None:
-        print("Esa habitacion no existe.")
-        return
+    while True:
+        try:
+            print(f"Estas son las habitaciones disponibles:")
+            for habitacion in hostal.habitaciones_disponibles():
+                print(f"{habitacion.numero}: {habitacion.tipo}")
+
+            numero = int(input("Numero de habitacion: "))
+           
+        except ValueError:
+                print("Debe ingresar un numero valido.")
+                continue
+        habitacion = hostal.buscar_habitacion(numero)
+        if habitacion is None:
+            print("Esa habitacion no existe.")
+            continue
+        if not habitacion.esta_disponible():
+            print("Esta habitación no esta disponible.")
+            continue
+        break
     hora_ingreso = input("Hora de ingreso (HH:MM): ")
     try:
         hora = datetime.strptime(hora_ingreso, "%H:%M").time()
@@ -120,9 +134,8 @@ def check_in(hostal):
     )
     habitacion.estadia = estadia
     hostal.huespedes_dia += 1
-    hostal.ingresos_dia += estadia.calcular_hospedaje()
     print("\n===== CHECK-IN EXITOSO =====")
-    print(f"Huesped: {cliente.nombre}")
+    print(f"Huesped: {cliente.nombre.title()}")
     print(f"Documento: {cliente.documento}")
     print(f"Habitacion: {habitacion.numero}")
     print(f"Tipo de habitacion: {habitacion.tipo}")
