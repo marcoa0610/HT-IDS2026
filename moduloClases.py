@@ -1,6 +1,6 @@
 #Clases
 from moduloDatos import (PRECIOS_NOCHE, PRECIO_ESTADIA_CORTA, RECARGO_POR_HORA, HABITACIONES)
-
+#Como esta?
 class Habitacion:
     def __init__(self, numero, tipo):
         self.numero = numero
