@@ -1,6 +1,6 @@
 #Datos
 
-
+#Espero se encuentre muy bien 
 
 PRECIOS_NOCHE = {
     "Sencilla": 25,
@@ -10,7 +10,6 @@ PRECIOS_NOCHE = {
 
 
 PRECIO_ESTADIA_CORTA = 15
-TIPO_ESTADIA_CORTA = "Sencilla"
 
 
 RECARGO_POR_HORA = 2
