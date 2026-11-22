@@ -16,34 +16,25 @@ from moduloFunciones import check_in
 from moduloFunciones import check_out
 from moduloFunciones import reporteDiario
 
-
 hostal = Hostal()
-
+#Hola Alvin
 while True:
-
     opcion = mostrar_menu()
-
     if opcion == "1":
         check_in(hostal)
-
     elif opcion == "2":
         check_out(hostal)
-
     elif opcion == "3":
         for habitacion in hostal.habitaciones:
             habitacion.mostrar_estado()
-
     elif opcion == "4":
         from moduloFunciones import gestionar_servicios
         gestionar_servicios(hostal)
-
     elif opcion == "5":
         reporteDiario(hostal)
-
     elif opcion == "6":
         print("Gracias por visitar Hostal Tropicana.")
         break
-
     else:
         print("Opcion invalida.")
 
