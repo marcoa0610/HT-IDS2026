@@ -1,12 +1,13 @@
-#Funciones
 # Funciones
 from datetime import datetime, time
 from moduloClases import Cliente
 from moduloClases import Estadia
 from moduloDatos import SERVICIOS
+from moduloDatos import SERVICIOS_UNICOS
 from moduloDatos import PRECIOS_NOCHE
 from moduloDatos import PRECIO_ESTADIA_CORTA
-from moduloDatos import HABITACIONES
+
+
 def pedir_habitacion_ocupada(hostal):
     try:
         numero_hab = int(input("Numero de habitacion: "))
@@ -22,6 +23,8 @@ def pedir_habitacion_ocupada(hostal):
         print("Esa habitacion no tiene huesped.")
         return None
     return habitacion
+
+
 def gestionar_servicios(hostal):
     habitacion = pedir_habitacion_ocupada(hostal)
     if habitacion is None:
@@ -55,10 +58,18 @@ def gestionar_servicios(hostal):
             quitar_cargo(estadia)
         elif 1 <= opcion <= len(nombres):
             nombre_elegido = nombres[opcion - 1]
-            try:
-                cantidad = int(input("Cantidad: "))
-            except ValueError:
-                cantidad = 0
+
+            if nombre_elegido in SERVICIOS_UNICOS:
+                ya_cargado = any(s.nombre == nombre_elegido for s in estadia.servicios)
+                if ya_cargado:
+                    print("Este servicio ya fue cargado (solo puede ser uno).")
+                    continue
+                cantidad = 1
+            else:
+                try:
+                    cantidad = int(input("Cantidad: "))
+                except ValueError:
+                    cantidad = 0
 
             if cantidad < 1:
                 print("Cantidad invalida.")
@@ -67,24 +78,25 @@ def gestionar_servicios(hostal):
                 print(f"Servicio agregado. Subtotal de servicios: ${estadia.calcular_total_servicios():.2f}")
         else:
             print("Opcion invalida.")
-    
+
+
 def check_in(hostal):
     print("\n===== CHECK-IN =====")
     if len(hostal.habitaciones_disponibles()) == 0:
         print("No hay habitaciones disponibles.")
         return
-    while True: 
+    while True:
         nombre = input("Nombre del huesped: ").strip().title()
-        if nombre !="":
+        if nombre != "":
             break
         print("El nombre no puede estar vacio")
     while True:
-        documento = input("Numero de documento: ")
-        if documento !="":
+        documento = input("Numero de documento: ").strip()
+        if documento != "":
             break
         print("No puede estar vacio el documento")
     while True:
-        print(f"Estos son los precios que manejamos si tu tipo estadia es noche:")
+        print("Estos son los precios que manejamos si tu tipo estadia es noche:")
         for llave, valor in PRECIOS_NOCHE.items():
             print(f"{llave}: ${valor}")
         print(f"Este es el precio si su estadia es corta: ${PRECIO_ESTADIA_CORTA}")
@@ -93,33 +105,37 @@ def check_in(hostal):
             break
         else:
             print("Tipo de estadia invalido.")
-    while True:
-        try:
-            print(f"Estas son las habitaciones disponibles:")
-            for habitacion in hostal.habitaciones_disponibles():
-                print(f"{habitacion.numero}: {habitacion.tipo}")
 
+    # Las estadias cortas solo se asignan a habitaciones sencillas
+    if tipo_estadia == "Corta":
+        disponibles = [h for h in hostal.habitaciones_disponibles() if h.tipo == "Sencilla"]
+        if not disponibles:
+            print("No hay habitaciones sencillas disponibles para estadia corta.")
+            return
+    else:
+        disponibles = hostal.habitaciones_disponibles()
+
+    numeros_validos = [h.numero for h in disponibles]
+    while True:
+        print("Estas son las habitaciones disponibles:")
+        for h in disponibles:
+            print(f"{h.numero}: {h.tipo}")
+        try:
             numero = int(input("Numero de habitacion: "))
-           
         except ValueError:
-                print("Debe ingresar un numero valido.")
-                continue
+            print("Debe ingresar un numero valido.")
+            continue
+        if numero not in numeros_validos:
+            print("Esa habitacion no esta disponible para este tipo de estadia.")
+            continue
         habitacion = hostal.buscar_habitacion(numero)
-        if habitacion is None:
-            print("Esa habitacion no existe.")
-            continue
-        if not habitacion.esta_disponible():
-            print("Esta habitación no esta disponible.")
-            continue
         break
+
     hora_ingreso = input("Hora de ingreso (HH:MM): ")
     try:
         hora = datetime.strptime(hora_ingreso, "%H:%M").time()
     except ValueError:
         print("Formato de hora invalido.")
-        return
-    if not habitacion.esta_disponible():
-        print("No disponible.")
         return
     if tipo_estadia == "Corta":
         if not (time(8, 0) <= hora <= time(19, 0)):
@@ -154,6 +170,7 @@ def check_in(hostal):
     print(f"Hora de ingreso: {hora_ingreso}")
     print(f"Tarifa base: ${estadia.calcular_hospedaje():.2f}")
 
+
 def quitar_cargo(estadia):
     if len(estadia.servicios) == 0:
         print("Esta habitacion no tiene servicios cargados.")
@@ -174,6 +191,7 @@ def quitar_cargo(estadia):
     else:
         print(f"Cargo quitado: {quitado.nombre}. Subtotal de servicios: ${estadia.calcular_total_servicios():.2f}")
 
+
 def reporteDiario(hostal):
     print("\n--- REPORTE DIARIO ---")
     print(f"Huespedes registrados: {hostal.huespedes_dia}")
@@ -188,45 +206,45 @@ def reporteDiario(hostal):
     for habitacion in hostal.habitaciones:
         habitacion.mostrar_estado()
 
+
 def check_out(hostal):
     print("\n--- CHECK-OUT ---")
     habitacion = pedir_habitacion_ocupada(hostal)
-    
+
     if habitacion is None:
         return
-    
+
     estadia = habitacion.estadia
-    
+
     hora_retiro = input("Hora de retiro (HH:MM): ")
     try:
         hora = datetime.strptime(hora_retiro, "%H:%M").time()
     except ValueError:
         print("Formato de hora invalido.")
         return
-    
+
     hora_ingreso = datetime.strptime(
         estadia.hora_ingreso, "%H:%M"
     ).time()
     minutos_ingreso = (
-        hora_ingreso.hour *60 + hora_ingreso.minute
+        hora_ingreso.hour * 60 + hora_ingreso.minute
     )
     minutos_retiro = hora.hour * 60 + hora.minute
-    
+
     if estadia.tipo_estadia == "Corta":
         minutos_usados = minutos_retiro - minutos_ingreso
         if minutos_usados < 0:
-            minutos_usados = minutos_usados + 1440   
+            minutos_usados = minutos_usados + 1440
     else:
         minutos_usados = (
             1440 * estadia.noches + minutos_retiro - minutos_ingreso
         )
-    
+
     hospedaje = estadia.calcular_hospedaje()
     recargo = estadia.calcular_recargo(minutos_usados)
     servicios = estadia.calcular_total_servicios()
     total = estadia.calcular_total(minutos_usados)
-    
-    #FACTURAAA
+
     print("\n--- FACTURA ---")
     print(f"Huesped: {estadia.cliente.nombre}")
     print(f"Habitación: {habitacion.numero}")
@@ -238,22 +256,22 @@ def check_out(hostal):
     print(f"Recargo: ${recargo:.2f}")
     print(f"Servicios: ${servicios:.2f}")
     print(f"\nTOTAL A PAGAR: ${total:.2f}")
-    
+
     pago = 0
     while pago < total:
         try:
             pago = float(input("Monto recibido: $"))
             if pago < total:
-                print("El pago es insuficiente.")
+                print("El pago es insuficente.")
         except ValueError:
             print("Debe ingresar un monto válido.")
-    
+
     cambio = pago - total
-    print(f"\nPago recibido: ${pago}")
+    print(f"\nPago recibido: ${pago:.2f}")
     print(f"Cambio: ${cambio:.2f}")
-    
+
     habitacion.estadia = None
     hostal.ingresos_dia += total
-    
+
     print("\nLa habitación fue liberada")
-    print("--- CHECK-OUT --- ")
+    print("--- CHECK-OUT ---")

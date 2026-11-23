@@ -1,4 +1,8 @@
 #Main
+from moduloClases import Hostal
+from moduloFunciones import check_in, check_out, reporteDiario, gestionar_servicios
+from moduloPersistencia import guardar_estado, cargar_estado
+
 
 def mostrar_menu():
     print("===== HOSTAL TROPICANA =====")
@@ -11,30 +15,28 @@ def mostrar_menu():
     return input("Digite que opción quiere: ")
 
 
-from moduloClases import Hostal
-from moduloFunciones import check_in
-from moduloFunciones import check_out
-from moduloFunciones import reporteDiario
-
 hostal = Hostal()
-#Hola Alvin
+cargar_estado(hostal)  # recupera lo guardado en la ultima ejecucion
+
 while True:
     opcion = mostrar_menu()
     if opcion == "1":
         check_in(hostal)
+        guardar_estado(hostal)
     elif opcion == "2":
         check_out(hostal)
+        guardar_estado(hostal)
     elif opcion == "3":
         for habitacion in hostal.habitaciones:
             habitacion.mostrar_estado()
     elif opcion == "4":
-        from moduloFunciones import gestionar_servicios
         gestionar_servicios(hostal)
+        guardar_estado(hostal)
     elif opcion == "5":
         reporteDiario(hostal)
     elif opcion == "6":
+        guardar_estado(hostal)
         print("Gracias por visitar Hostal Tropicana.")
         break
     else:
         print("Opcion invalida.")
-

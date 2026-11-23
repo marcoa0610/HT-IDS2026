@@ -1,7 +1,5 @@
 #Datos
 
-#Espero se encuentre muy bien 
-
 PRECIOS_NOCHE = {
     "Sencilla": 25,
     "Doble": 35,
@@ -21,6 +19,8 @@ SERVICIOS = {
     "Bebidas": 1,
 }
 
+# Servicios que solo se pueden cargar una vez por estadia (cantidad fija = 1)
+SERVICIOS_UNICOS = {"Servicio a la habitacion"}
 
 
 HABITACIONES = {
