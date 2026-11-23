@@ -70,6 +70,9 @@ def gestionar_servicios(hostal):
     
 def check_in(hostal):
     print("\n===== CHECK-IN =====")
+    if len(hostal.habitaciones_disponibles()) == 0:
+        print("No hay habitaciones disponibles.")
+        return
     nombre = input("Nombre del huesped: ").strip().title()
     documento = input("Numero de documento: ")
     while True:
