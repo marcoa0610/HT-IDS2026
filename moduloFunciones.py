@@ -244,7 +244,7 @@ def check_out(hostal):
         try:
             pago = float(input("Monto recibido: $"))
             if pago < total:
-                print("El pago es insuficente.")
+                print("El pago es insuficiente.")
         except ValueError:
             print("Debe ingresar un monto válido.")
     
