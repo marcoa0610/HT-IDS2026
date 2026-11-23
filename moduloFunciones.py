@@ -73,8 +73,16 @@ def check_in(hostal):
     if len(hostal.habitaciones_disponibles()) == 0:
         print("No hay habitaciones disponibles.")
         return
-    nombre = input("Nombre del huesped: ").strip().title()
-    documento = input("Numero de documento: ")
+    while True: 
+        nombre = input("Nombre del huesped: ").strip().title()
+        if nombre !="":
+            break
+        print("El nombre no puede estar vacio")
+    while True:
+        documento = input("Numero de documento: ")
+        if documento !="":
+            break
+        print("No puede estar vacio el documento")
     while True:
         print(f"Estos son los precios que manejamos si tu tipo estadia es noche:")
         for llave, valor in PRECIOS_NOCHE.items():
